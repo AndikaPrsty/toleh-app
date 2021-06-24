@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "142832918834",
+    "project_id": "toleh-app",
+    "storage_bucket": "toleh-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:142832918834:android:5b9bf4f16b6fbc2628372b",
+        "android_client_info": {
+          "package_name": "com.TA2021.toleh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "142832918834-bdeshs8u4ure5qmfeh73kce6agcurt1c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.TA2021.toleh",
+            "certificate_hash": "a98cb77ad4fc21d03e7100d0cea35cd0fa96d4e8"
+          }
+        },
+        {
+          "client_id": "142832918834-l1m2o6opfq9s1veitjfibtafj54k16rp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTGA7pgqtwAbqVAwsDr9pTTu8dBQHnTAc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "142832918834-l1m2o6opfq9s1veitjfibtafj54k16rp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
