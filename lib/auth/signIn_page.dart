@@ -110,8 +110,12 @@ class _SignInPageState extends State<SignInPage> {
                                   }
                                   if (_success) {
                                     Navigator.of(context).pushReplacement(
-                                        MaterialPageRoute(
-                                            builder: (_) => Home()));
+                                      MaterialPageRoute(
+                                        builder: (_) => Home(
+                                          selectedPage: 2,
+                                        ),
+                                      ),
+                                    );
                                   }
                                 },
                               ),

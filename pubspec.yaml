@@ -28,6 +28,7 @@ dependencies:
   geolocator: ^7.0.3
   google_maps_flutter: ^2.0.4
   http: ^0.13.3
+  image_cropper: ^1.4.1
   image_picker: ^0.7.5+2
   intl: ^0.17.0
   loading_overlay: ^0.3.0

@@ -17,11 +17,17 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: Home());
+    return MaterialApp(
+        home: Home(
+      selectedPage: 0,
+    ));
   }
 }
 
 class Home extends StatefulWidget {
+  final int selectedPage;
+
+  const Home({Key key, @required this.selectedPage}) : super(key: key);
   @override
   _HomeState createState() => _HomeState();
 }
@@ -31,7 +37,8 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    _tabController = TabController(initialIndex: 0, length: 3, vsync: this);
+    _tabController = TabController(
+        initialIndex: widget.selectedPage, length: 3, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });

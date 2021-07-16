@@ -1,25 +1,87 @@
-import 'package:flutter/material.dart';
-import 'package:toleh/widgets/toko/produk_item.dart';
+import 'dart:convert';
 
-class ListProduk extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:toleh/model/produk.dart';
+import 'package:toleh/model/toko.dart';
+import 'package:toleh/model/user.dart';
+import 'package:toleh/widgets/loading_indicator.dart';
+import 'package:toleh/widgets/toko/produk_item.dart';
+import 'package:http/http.dart' as http;
+
+class ListProduk extends StatefulWidget {
+  final User user;
+  final Toko toko;
+  final bool showMenu;
   const ListProduk({
     Key key,
+    @required this.showMenu,
+    @required this.user,
+    @required this.toko,
   }) : super(key: key);
 
   @override
+  _ListProdukState createState() => _ListProdukState();
+}
+
+class _ListProdukState extends State<ListProduk> {
+  List<Produk> produk = <Produk>[];
+  bool _loading;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      await _getProduk();
+    });
+
+    super.initState();
+  }
+
+  Future<void> _getProduk() async {
+    setState(() {
+      _loading = true;
+    });
+    try {
+      http.Response response = await http.post(
+          Uri.parse('http://192.168.0.120:5000/api/produk/'),
+          headers: {'Content-Type': 'application/json'},
+          body: jsonEncode(
+              <String, dynamic>{'id_toko': '${widget.toko.idToko}'}));
+      List prdk = jsonDecode(response.body);
+      print(prdk);
+      produk = prdk.map((dynamic json) => Produk.fromJson(json)).toList();
+      print(produk);
+    } catch (e) {
+      print(e);
+    } finally {
+      setState(() {
+        _loading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Expanded(
-        child: Container(
-      child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(10),
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          crossAxisCount: 2,
-          children: List.generate(
-            50,
-            (index) => ProdukItem(),
-          )),
-    ));
+    return !_loading
+        ? Expanded(
+            child: Container(
+              child: GridView.count(
+                  primary: false,
+                  padding: const EdgeInsets.all(10),
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 2,
+                  children: produk
+                      .map((e) => ProdukItem(
+                            showMenu: widget.showMenu,
+                            namaProduk: e.namaProduk,
+                            imageUrl: e.imageUrl,
+                            idProduk: e.id,
+                            idToko: e.idToko,
+                            idUser: widget.user.id,
+                          ))
+                      .toList()),
+            ),
+          )
+        : Center(child: LoadingIndicator());
   }
 }

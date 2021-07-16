@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toleh/model/toko.dart';
+import 'package:toleh/model/user.dart';
 import 'package:toleh/widgets/title.dart';
 import 'package:toleh/widgets/toko/alamat_toko.dart';
 import 'package:toleh/widgets/toko/gambar_toko.dart';
@@ -20,22 +24,46 @@ class TokoPage extends StatefulWidget {
 }
 
 class _TokoPageState extends State<TokoPage> {
-  final toko;
+  final Toko toko;
+  User user;
 
   _TokoPageState({
     @required this.toko,
   });
 
   @override
+  void initState() {
+    Future.delayed(Duration.zero, () async {
+      var prefs = await SharedPreferences.getInstance();
+      user = prefs.getString('user_data') != null
+          ? User.fromJson(jsonDecode(prefs.getString('user_data')))
+          : null;
+      setState(() {});
+      print(user.id == toko.idUser);
+      print(user.role);
+      print(toko.idUser);
+    });
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => TambahProduk()));
-        },
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: user != null
+          ? (user.id == toko.idUser || user.role == 'ADMIN'
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (BuildContext context) => TambahProduk(
+                              toko: toko,
+                              user: user,
+                            )));
+                  },
+                  child: Icon(Icons.add),
+                )
+              : SizedBox())
+          : SizedBox(),
       body: SafeArea(
         child: Container(
           child: Column(
@@ -45,7 +73,14 @@ class _TokoPageState extends State<TokoPage> {
                   children: [
                     GambarToko(imageUrl: toko.imageUrl),
                     NamaToko(namaToko: toko.namaToko),
-                    MenuGambarButton(toko: toko)
+                    user != null
+                        ? (user.id == toko.idUser
+                            ? MenuGambarButton(
+                                toko: toko,
+                                user: user,
+                              )
+                            : SizedBox())
+                        : SizedBox()
                   ],
                 ),
               ),
@@ -76,7 +111,13 @@ class _TokoPageState extends State<TokoPage> {
                 ),
               ),
               TitleWidget(title: 'Daftar Produk'),
-              ListProduk(),
+              ListProduk(
+                showMenu: user != null
+                    ? (user.id == toko.idUser ? true : false)
+                    : false,
+                toko: toko,
+                user: user,
+              ),
             ],
           ),
         ),

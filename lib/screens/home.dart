@@ -20,11 +20,14 @@ class _BerandaState extends State<Beranda> {
   GlobalKey _searchBarKey = GlobalKey<FloatingSearchBarState>();
   List<Toko> tokos = <Toko>[];
   bool loading = false;
+  String _searchValue;
 
   @override
   void initState() {
     _searchController = FloatingSearchBarController();
-    _getTokos();
+    Future.delayed(Duration.zero, () async {
+      await _getTokos();
+    });
     print('tokos: $tokos');
     super.initState();
   }
@@ -56,6 +59,29 @@ class _BerandaState extends State<Beranda> {
     }
   }
 
+  Future<void> _getTokoByProduk() async {
+    setState(() {
+      loading = true;
+    });
+
+    try {
+      http.Response response = await http.post(
+          Uri.parse('http://192.168.0.120:5000/api/toko/cari_produk'),
+          headers: {'Content-Type': "application/json"},
+          body: jsonEncode(<String, dynamic>{'cari_produk': '$_searchValue'}));
+      List toko = jsonDecode(response.body);
+      print(toko);
+      tokos = toko.map((dynamic json) => Toko.fromJson(json)).toList();
+      await _getCurrentLocation();
+      _calculateDistance();
+      setState(() {
+        loading = false;
+      });
+    } catch (e) {
+      print(e);
+    }
+  }
+
   Future<void> _getCurrentLocation() async {
     _position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.best);
@@ -72,6 +98,14 @@ class _BerandaState extends State<Beranda> {
     tokos.sort((a, b) => a.distance.compareTo(b.distance));
   }
 
+  Future<void> _refreshPage() async {
+    setState(() {
+      _searchValue = null;
+    });
+
+    await _getTokos();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -80,16 +114,48 @@ class _BerandaState extends State<Beranda> {
         Container(
             margin: EdgeInsets.symmetric(horizontal: 15, vertical: 70),
             child: Text(
-              'Menampilkan toko oleh-oleh terdekat :',
+              _searchValue == null
+                  ? 'Menampilkan toko oleh-oleh terdekat :'
+                  : 'Daftar toko berdasarkan produk: $_searchValue',
               style: TextStyle(fontWeight: FontWeight.bold),
             )),
-        loading ? LoadingIndicator() : ListToko(tokos: tokos),
+        loading
+            ? LoadingIndicator()
+            : (tokos.isEmpty
+                ? Center(
+                    child: Text('tidak ditemukan!'),
+                  )
+                : ListToko(tokos: tokos)),
         Container(
           child: FloatingSearchBar(
-            onSubmitted: (String value) {
+            onSubmitted: (String value) async {
               print('searching $value');
+
+              if (value != null) {
+                setState(() {
+                  _searchValue = value;
+                });
+                await _getTokoByProduk();
+              }
+
               _searchController.close();
             },
+            actions: [
+              FloatingSearchBarAction(
+                showIfOpened: false,
+                child: CircularButton(
+                  icon: _searchValue != null
+                      ? const Icon(Icons.delete)
+                      : const Icon(Icons.search),
+                  onPressed: () async {
+                    if (_searchValue != null) {
+                      await _refreshPage();
+                      _searchController.clear();
+                    }
+                  },
+                ),
+              ),
+            ],
             clearQueryOnClose: false,
             hint: 'Bakpia',
             key: _searchBarKey,

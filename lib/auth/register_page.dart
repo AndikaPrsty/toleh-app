@@ -159,7 +159,7 @@ class _RegisterPageState extends State<RegisterPage> {
               'email': '${_emailController.text}',
               'password': '${_passwordController.text}',
               'telp': _phoneNumberController.text,
-              'role': 'USER'
+              'role': 'ADMIN'
             }));
 
         var decodeJson = jsonDecode(response.body);

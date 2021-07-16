@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toleh/model/user.dart';
 import 'package:toleh/widgets/title.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_cropper/image_cropper.dart';
 
 class TambahTokoPage extends StatefulWidget {
   @override
@@ -41,8 +42,20 @@ class _TambahTokoPageState extends State<TambahTokoPage> {
   Future<void> getImage() async {
     final pickedImage = await picker.getImage(source: ImageSource.camera);
     if (pickedImage != null) {
+      File croppedImage = await ImageCropper.cropImage(
+          sourcePath: pickedImage.path,
+          aspectRatioPresets: [CropAspectRatioPreset.ratio3x2],
+          androidUiSettings: AndroidUiSettings(
+              toolbarTitle: 'Cropper',
+              toolbarColor: Colors.deepOrange,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.original,
+              lockAspectRatio: false),
+          iosUiSettings: IOSUiSettings(
+            minimumAspectRatio: 1.0,
+          ));
       setState(() {
-        _image = File(pickedImage.path);
+        _image = croppedImage;
       });
     }
   }
@@ -178,6 +191,7 @@ class _TambahTokoPageState extends State<TambahTokoPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
+                                    keyboardType: TextInputType.datetime,
                                     controller: _jamBukaController,
                                     validator: (String value) {
                                       if (value == null || value.isEmpty) {
@@ -196,6 +210,7 @@ class _TambahTokoPageState extends State<TambahTokoPage> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: TextFormField(
                                     controller: _jamTutupController,
+                                    keyboardType: TextInputType.datetime,
                                     validator: (String value) {
                                       if (value == null || value.isEmpty) {
                                         return 'Jam Tutup tidak boleh kosong';
@@ -350,6 +365,7 @@ class _TambahTokoPageState extends State<TambahTokoPage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: TextFormField(
+                              keyboardType: TextInputType.number,
                               controller: _kodePosController,
                               validator: (String value) {
                                 if (value == null || value.isEmpty) {
