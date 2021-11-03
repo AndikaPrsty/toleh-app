@@ -20,6 +20,8 @@ This App is for find closest souvenir shop based on souvenirs that we search
 * Postgresql
 * prisma js
 
+[backend repo](https://github.com/AndikaPrsty/toleh-app-api)
+
 ## Application
 
 <img src="https://raw.githubusercontent.com/AndikaPrsty/toleh-app/master/1.jpg" alt="drawing" width="300"/> <img src="https://raw.githubusercontent.com/AndikaPrsty/toleh-app/master/2.jpg" alt="drawing" width="300"/>
