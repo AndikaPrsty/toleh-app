@@ -437,7 +437,7 @@ class _TambahTokoPageState extends State<TambahTokoPage> {
         imageUrl = imageUrl['data']['url'];
 
         http.Response response = await http.post(
-          Uri.parse('http://192.168.0.120:5000/api/toko/'),
+          Uri.parse('http://192.168.0.102:5000/api/toko/'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: jsonEncode(<String, dynamic>{
             'id_user': '${user.id}',

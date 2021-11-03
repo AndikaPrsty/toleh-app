@@ -39,9 +39,6 @@ class _TokoPageState extends State<TokoPage> {
           ? User.fromJson(jsonDecode(prefs.getString('user_data')))
           : null;
       setState(() {});
-      print(user.id == toko.idUser);
-      print(user.role);
-      print(toko.idUser);
     });
 
     super.initState();
@@ -74,7 +71,7 @@ class _TokoPageState extends State<TokoPage> {
                     GambarToko(imageUrl: toko.imageUrl),
                     NamaToko(namaToko: toko.namaToko),
                     user != null
-                        ? (user.id == toko.idUser
+                        ? (user.id == toko.idUser || user.role == 'ADMIN'
                             ? MenuGambarButton(
                                 toko: toko,
                                 user: user,
@@ -112,11 +109,9 @@ class _TokoPageState extends State<TokoPage> {
               ),
               TitleWidget(title: 'Daftar Produk'),
               ListProduk(
-                showMenu: user != null
-                    ? (user.id == toko.idUser ? true : false)
-                    : false,
                 toko: toko,
-                user: user,
+                idUser: user != null ? user.id : '',
+                userRole: user != null ? user.role : '',
               ),
             ],
           ),

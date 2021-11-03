@@ -146,7 +146,7 @@ class _SignInPageState extends State<SignInPage> {
           _isLoading = true;
         });
         http.Response response = await http.post(
-            Uri.parse('http://192.168.0.120:5000/api/auth/login'),
+            Uri.parse('http://192.168.0.102:5000/api/auth/login'),
             headers: <String, String>{'Content-Type': 'application/json'},
             body: jsonEncode({
               'email': "${_emailController.text}",

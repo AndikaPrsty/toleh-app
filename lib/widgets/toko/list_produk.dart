@@ -3,20 +3,19 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:toleh/model/produk.dart';
 import 'package:toleh/model/toko.dart';
-import 'package:toleh/model/user.dart';
 import 'package:toleh/widgets/loading_indicator.dart';
 import 'package:toleh/widgets/toko/produk_item.dart';
 import 'package:http/http.dart' as http;
 
 class ListProduk extends StatefulWidget {
-  final User user;
   final Toko toko;
-  final bool showMenu;
+  final String idUser;
+  final String userRole;
   const ListProduk({
     Key key,
-    @required this.showMenu,
-    @required this.user,
     @required this.toko,
+    @required this.idUser,
+    @required this.userRole,
   }) : super(key: key);
 
   @override
@@ -42,7 +41,7 @@ class _ListProdukState extends State<ListProduk> {
     });
     try {
       http.Response response = await http.post(
-          Uri.parse('http://192.168.0.120:5000/api/produk/'),
+          Uri.parse('http://192.168.0.102:5000/api/produk/'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(
               <String, dynamic>{'id_toko': '${widget.toko.idToko}'}));
@@ -72,12 +71,15 @@ class _ListProdukState extends State<ListProduk> {
                   crossAxisCount: 2,
                   children: produk
                       .map((e) => ProdukItem(
-                            showMenu: widget.showMenu,
                             namaProduk: e.namaProduk,
                             imageUrl: e.imageUrl,
                             idProduk: e.id,
                             idToko: e.idToko,
-                            idUser: widget.user.id,
+                            idUser: widget.idUser,
+                            toko: widget.toko,
+                            userRole: widget.userRole,
+                            hargaProduk: e.hargaProduk,
+                            detailProduk: e.detailProduk,
                           ))
                       .toList()),
             ),

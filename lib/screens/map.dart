@@ -40,7 +40,7 @@ class _MapState extends State<MapPage> {
   Future<void> _getTokos() async {
     try {
       http.Response response =
-          await http.get(Uri.parse('http://192.168.0.120:5000/api/toko/'));
+          await http.get(Uri.parse('http://192.168.0.102:5000/api/toko/'));
 
       List toko = jsonDecode(response.body);
 

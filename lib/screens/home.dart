@@ -45,7 +45,7 @@ class _BerandaState extends State<Beranda> {
 
     try {
       http.Response response =
-          await http.get(Uri.parse('http://192.168.0.120:5000/api/toko/'));
+          await http.get(Uri.parse('http://192.168.0.102:5000/api/toko/'));
       List toko = jsonDecode(response.body);
       print(toko);
       tokos = toko.map((dynamic json) => Toko.fromJson(json)).toList();
@@ -66,19 +66,21 @@ class _BerandaState extends State<Beranda> {
 
     try {
       http.Response response = await http.post(
-          Uri.parse('http://192.168.0.120:5000/api/toko/cari_produk'),
+          Uri.parse('http://192.168.0.102:5000/api/toko/cari_produk'),
           headers: {'Content-Type': "application/json"},
           body: jsonEncode(<String, dynamic>{'cari_produk': '$_searchValue'}));
       List toko = jsonDecode(response.body);
+
       print(toko);
       tokos = toko.map((dynamic json) => Toko.fromJson(json)).toList();
       await _getCurrentLocation();
       _calculateDistance();
+    } catch (e) {
+      print(e);
+    } finally {
       setState(() {
         loading = false;
       });
-    } catch (e) {
-      print(e);
     }
   }
 

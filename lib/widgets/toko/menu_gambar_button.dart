@@ -185,7 +185,7 @@ class _MenuGambarButtonState extends State<MenuGambarButton> {
     try {
       if (widget.user != null) {
         http.Response response = await http.post(
-            Uri.parse('http://192.168.0.120:5000/api/toko/delete'),
+            Uri.parse('http://192.168.0.102:5000/api/toko/delete'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode(<String, dynamic>{
               'id_toko': '${widget.toko.idToko}',
@@ -201,7 +201,7 @@ class _MenuGambarButtonState extends State<MenuGambarButton> {
   Future<void> _updateLokasiToko() async {
     try {
       http.Response response = await http.post(
-          Uri.parse('http://192.168.0.120:5000/api/toko/update_koordinat'),
+          Uri.parse('http://192.168.0.102:5000/api/toko/update_koordinat'),
           headers: {'Content-Type': 'application/json'},
           body: jsonEncode(<String, dynamic>{
             'latitude': '${_position.latitude}',

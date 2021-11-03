@@ -30,6 +30,8 @@ class _TambahProdukState extends State<TambahProduk> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   TextEditingController _namaProdukController = TextEditingController();
+  TextEditingController _detailProdukController = TextEditingController();
+  TextEditingController _hargaProdukController = TextEditingController();
 
   Future<void> getImage() async {
     final pickedImage = await picker.getImage(source: ImageSource.camera);
@@ -62,6 +64,8 @@ class _TambahProdukState extends State<TambahProduk> {
   @override
   void dispose() {
     _namaProdukController.dispose();
+    _detailProdukController.dispose();
+    _hargaProdukController.dispose();
     super.dispose();
   }
 
@@ -84,11 +88,13 @@ class _TambahProdukState extends State<TambahProduk> {
         imageUrl = imageUrl['data']['url'];
 
         http.Response response = await http.post(
-          Uri.parse('http://192.168.0.120:5000/api/produk/add'),
+          Uri.parse('http://192.168.0.102:5000/api/produk/add'),
           headers: <String, String>{'Content-Type': 'application/json'},
           body: jsonEncode(<String, dynamic>{
             'id_user': '${widget.user.id}',
             'id_toko': '${widget.toko.idToko}',
+            'detail_produk': '${_detailProdukController.text}',
+            'harga_produk': '${_hargaProdukController.text}',
             'url_gambar': '$imageUrl',
             'nama_produk': '${_namaProdukController.text}',
           }),
@@ -127,82 +133,118 @@ class _TambahProdukState extends State<TambahProduk> {
           body: SafeArea(
               child: Container(
             width: MediaQuery.of(context).size.width,
-            child: Column(
-              children: [
-                TitleWidget(title: 'Tambah Produk'),
-                Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextFormField(
-                            controller: _namaProdukController,
-                            validator: (String value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Nama Produk tidak boleh kosong';
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                                labelText: 'Nama Produk',
-                                border: OutlineInputBorder()),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  TitleWidget(title: 'Tambah Produk'),
+                  Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              controller: _namaProdukController,
+                              validator: (String value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Nama Produk tidak boleh kosong';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'Nama Produk',
+                                  border: OutlineInputBorder()),
+                            ),
                           ),
-                        ),
-                        Container(
-                          width: 300,
-                          height: 300,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black)),
-                          child: _image != null
-                              ? Image.file(
-                                  _image,
-                                  fit: BoxFit.cover,
-                                )
-                              : IconButton(
-                                  icon: Icon(Icons.add_a_photo),
-                                  onPressed: getImage,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              controller: _detailProdukController,
+                              maxLines: 8,
+                              validator: (String value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Detail Produk tidak boleh kosong';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'Detail Produk',
+                                  border: OutlineInputBorder()),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextFormField(
+                              keyboardType: TextInputType.number,
+                              maxLines: null,
+                              controller: _hargaProdukController,
+                              validator: (String value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Harga Produk tidak boleh kosong';
+                                }
+                                return null;
+                              },
+                              decoration: InputDecoration(
+                                  labelText: 'Harga Produk',
+                                  border: OutlineInputBorder()),
+                            ),
+                          ),
+                          Container(
+                            width: 300,
+                            height: 300,
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.black)),
+                            child: _image != null
+                                ? Image.file(
+                                    _image,
+                                    fit: BoxFit.cover,
+                                  )
+                                : IconButton(
+                                    icon: Icon(Icons.add_a_photo),
+                                    onPressed: getImage,
+                                  ),
+                          ),
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            alignment: Alignment.center,
+                            margin: EdgeInsets.only(top: 20),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: Colors.red),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('Batal')),
                                 ),
-                        ),
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          alignment: Alignment.center,
-                          margin: EdgeInsets.only(top: 20),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(right: 10),
-                                child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        primary: Colors.red),
-                                    onPressed: () {
-                                      Navigator.pop(context);
+                                ElevatedButton(
+                                    onPressed: () async {
+                                      await _tambahProduk();
+                                      print('hello?');
+                                      if (_isSuccess == true) {
+                                        Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder:
+                                                    (BuildContext context) =>
+                                                        Home(
+                                                          selectedPage: 0,
+                                                        )));
+                                      }
                                     },
-                                    child: Text('Batal')),
-                              ),
-                              ElevatedButton(
-                                  onPressed: () async {
-                                    await _tambahProduk();
-                                    print('hello?');
-                                    if (_isSuccess == true) {
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  Home(
-                                                    selectedPage: 0,
-                                                  )));
-                                    }
-                                  },
-                                  child: Text('Upload dan Simpan'))
-                            ],
-                          ),
-                        )
-                      ],
-                    ))
-              ],
+                                    child: Text('Upload dan Simpan'))
+                              ],
+                            ),
+                          )
+                        ],
+                      ))
+                ],
+              ),
             ),
           )),
         ),

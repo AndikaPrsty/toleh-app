@@ -152,14 +152,14 @@ class _RegisterPageState extends State<RegisterPage> {
         });
         print('send to api');
         http.Response response = await http.post(
-            Uri.parse('http://192.168.0.120:5000/api/auth/register'),
+            Uri.parse('http://192.168.0.102:5000/api/auth/register'),
             headers: <String, String>{'Content-Type': 'application/json'},
             body: jsonEncode({
               'nama': _namaController.text,
               'email': '${_emailController.text}',
               'password': '${_passwordController.text}',
               'telp': _phoneNumberController.text,
-              'role': 'ADMIN'
+              'role': 'USER'
             }));
 
         var decodeJson = jsonDecode(response.body);

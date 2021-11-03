@@ -151,7 +151,7 @@ class _FormEditTokoState extends State<FormEditToko> {
         var idUser = user['id'];
         print(idUser);
         http.Response response = await http.post(
-            Uri.parse('http://192.168.0.120:5000/api/toko/update'),
+            Uri.parse('http://192.168.0.102:5000/api/toko/update'),
             headers: {'Content-Type': 'application/json'},
             body: jsonEncode(<String, dynamic>{
               'id_toko': '${widget.toko.idToko}',

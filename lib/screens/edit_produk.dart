@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,8 @@ import 'package:toleh/main.dart';
 
 class EditProduk extends StatefulWidget {
   final String namaProduk;
+  final String detailProduk;
+  final int hargaProduk;
   final String imageUrl;
   final String idProduk;
   final String idToko;
@@ -21,7 +24,9 @@ class EditProduk extends StatefulWidget {
       @required this.imageUrl,
       @required this.idProduk,
       @required this.idToko,
-      @required this.idUser})
+      @required this.idUser,
+      @required this.detailProduk,
+      @required this.hargaProduk})
       : super(key: key);
   @override
   _EditProdukState createState() => _EditProdukState();
@@ -34,6 +39,8 @@ class _EditProdukState extends State<EditProduk> {
   final ImagePicker picker = ImagePicker();
 
   TextEditingController _namaProdukController = TextEditingController();
+  TextEditingController _detailProdukController = TextEditingController();
+  TextEditingController _hargaProdukController = TextEditingController();
 
   Future<void> getImage() async {
     final pickedImage = await picker.getImage(source: ImageSource.camera);
@@ -59,6 +66,8 @@ class _EditProdukState extends State<EditProduk> {
   @override
   void initState() {
     _namaProdukController.text = widget.namaProduk;
+    _detailProdukController.text = widget.detailProduk;
+    _hargaProdukController.text = '${widget.hargaProduk}';
     super.initState();
   }
 
@@ -93,6 +102,26 @@ class _EditProdukState extends State<EditProduk> {
                           controller: _namaProdukController,
                           decoration: InputDecoration(
                               labelText: 'Nama Produk',
+                              border: OutlineInputBorder()),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _detailProdukController,
+                          maxLines: 8,
+                          decoration: InputDecoration(
+                              labelText: 'Detail Produk',
+                              border: OutlineInputBorder()),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextFormField(
+                          controller: _hargaProdukController,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              labelText: 'Harga Produk',
                               border: OutlineInputBorder()),
                         ),
                       ),
@@ -184,13 +213,15 @@ class _EditProdukState extends State<EditProduk> {
       }
 
       http.Response response = await http.post(
-        Uri.parse('http://192.168.0.120:5000/api/produk/update'),
+        Uri.parse('http://192.168.0.102:5000/api/produk/update'),
         headers: <String, String>{'Content-Type': 'application/json'},
         body: jsonEncode(<String, dynamic>{
           'id_user': '${widget.idUser}',
           'id_toko': '${widget.idToko}',
           'id_produk': '${widget.idProduk}',
           'nama_produk': '${_namaProdukController.text}',
+          'detail_produk': '${_detailProdukController.text}',
+          'harga_produk': '${_hargaProdukController.text}',
           'url_gambar': '$_imageUrl',
         }),
       );
